@@ -1,7 +1,7 @@
 {
     "profile": "default",
     "region": "ap-south-1",
-    "source_ami": "ami-0b2ec65899cc867ef",
+    "source_ami": "ami-09b0a86a2c84101e1",
     "vpc_id": "vpc-0877d9bcfed5d8316",
     "subnet_id": "subnet-0bce2e936afad903f",
     "instance_type": "t3.medium",
