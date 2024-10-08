@@ -32,11 +32,15 @@ jobs:
           aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
           aws configure set default.region $AWS_REGION
 
+      - name: Initialize Packer
+        run: packer init .
+
+      - name: Validate Packer Template
+        run: packer validate -var-file=variables.json cis-ami.pkr.hcl    
+
       - name: Capture AMI Metadata using Packer and Ansible
         id: ami_metadata
         run: |
-          packer init .
-          packer validate -var-file=variables.json cis-ami.pkr.hcl
           AMI_ID=$(packer build -var-file=variables.json -machine-readable cis-ami.pkr.hcl | awk -F, '$0 ~/artifact,0,id/ {print $6}')
           echo "AMI_ID=${AMI_ID}" >> $GITHUB_ENV
           echo "AMI_ID is $AMI_ID"
