@@ -1,5 +1,5 @@
 - name: Harden Server
-  hosts: all
+  hosts: default
   become: true
 
   roles:
