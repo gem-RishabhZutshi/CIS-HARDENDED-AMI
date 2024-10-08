@@ -9,7 +9,7 @@ packer init .
 packer validate -var-file=variables.json cis-ami.pkr.hcl
 
 # Build the AMI and capture the output
-output=$(packer build -var-file=variables.json -machine-readable cis-ami.pkr.hcl)
+output=$(packer build -var-file=variables.json cis-ami.pkr.hcl)
 
 # Print the output for debugging
 echo "$output"
