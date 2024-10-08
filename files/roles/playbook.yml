@@ -3,4 +3,4 @@
   become: true
 
   roles:
-    - ubuntu2004_cis
+    - ubuntu2004_ci
