@@ -17,6 +17,7 @@ jobs:
         with:
           packer_version: latest
 
+
       - name: Install AWS CLI
         run: |
           sudo apt install -y awscli
@@ -30,19 +31,29 @@ jobs:
           aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
           aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
           aws configure set default.region $AWS_REGION
-     
 
-      - name: Build AMI with Packer
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
+      - name: Validate Packer Template
         run: |
           packer validate -var-file=variables.json cis-ami.pkr.hcl
-          packer build -var-file=variables.json cis-ami.pkr.hcl
 
+      - name: Capture AMI Metadata
+        id: ami_metadata
+        run: |
+          AMI_ID=$(packer build -var-file=variables.json -machine-readable cis-ami.pkr.hcl | awk -F, '$0 ~/artifact,0,id/ {print $6}')
+          echo "AMI_ID=${AMI_ID}" >> $GITHUB_ENV
+          echo "AMI_ID is $AMI_ID"
 
-      - name: Upload AMI Metadata
+      - name: Display AMI Metadata
         if: success()
         run: |
-          echo "AMI Built Successfully"
+          echo "The AMI ID is ${{ env.AMI_ID }}"
+
+      - name: Get Full AMI Metadata
+        if: success()
+        run: |
+          aws ec2 describe-images --image-ids ${{ env.AMI_ID }} --query 'Images[0]'
+
+      - name: Success Notification
+        if: success()
+        run: |
+          echo "AMI Built Successfully with AMI ID: ${{ env.AMI_ID }}"
