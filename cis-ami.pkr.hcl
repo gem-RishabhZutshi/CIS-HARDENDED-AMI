@@ -29,7 +29,7 @@ variable "subnet_id" {
 }
 variable "instance_type" {
   type = string
-  default = "t3.micro"
+  default = "t3.medium"
 }
 
 variable "ami_name_prefix" {
